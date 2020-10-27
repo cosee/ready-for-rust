@@ -1,0 +1,20 @@
+mod data;
+mod slide0;
+mod slide1;
+mod slide2;
+mod slide3;
+mod slide4;
+mod slide5;
+mod slide6;
+mod slide7;
+
+pub use data::Present;
+use data::*;
+pub use slide0::*;
+pub use slide1::*;
+pub use slide2::*;
+pub use slide3::*;
+pub use slide4::*;
+pub use slide5::*;
+pub use slide6::*;
+pub use slide7::*;

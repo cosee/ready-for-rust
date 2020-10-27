@@ -1,0 +1,5 @@
+[target.x86_64-unknown-linux-gnu.extern]
+rustc-link-lib = ["extern"]
+rustc-link-search = ["./c-src/"]
+rustc-flags = "-L ./c-src"
+root = "/home/joachim/Documents/TechTalk/slides"

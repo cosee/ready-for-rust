@@ -1,0 +1,6 @@
+/target
+**/*.rs.bk
+c-src/*.o
+c-src/*.so
+c-src/*.a
+tags

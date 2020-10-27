@@ -1,0 +1,11 @@
+[package]
+name = "slides"
+version = "0.1.0"
+authors = ["Raik Joachim <raik.joachim@cosee.biz>"]
+edition = "2018"
+links = "extern"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+chrono = "*"

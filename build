@@ -1,0 +1,13 @@
+pushd c-src
+echo building c static lib
+bash build
+popd
+
+echo tagging ...
+ctags -R --languages=rust --kinds-rust=nfseg
+
+echo checking ...
+cargo check || exit 0
+
+echo building debug build
+cargo build
