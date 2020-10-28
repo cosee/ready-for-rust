@@ -1,5 +1,6 @@
 /target
 **/*.rs.bk
+**/*.swp
 c-src/*.o
 c-src/*.so
 c-src/*.a
