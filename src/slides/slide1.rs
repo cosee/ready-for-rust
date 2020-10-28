@@ -58,6 +58,11 @@ pub fn syntax() {
     // Heap allokierter Array
     let mut vec = Vec::new();
     vec = vec![0, 1, 2, 3, 4];
+
+    // Slices
+    let slice_middle = &vec[1..3]; // [1, 2]
+    let slice_to_end = &vec[2..]; // [2, 3, 4]
+    let slice_from_start = &vec[..3]; // [0, 1, 2]
 }
 
 fn next_slide() {
