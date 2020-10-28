@@ -2,28 +2,35 @@ use super::*;
 
 pub fn closures() {}
 
-fn make_counter(initial_value: usize) -> impl FnMut() -> usize {
+fn make_counter(initial_value: usize) -> (impl FnMut() -> usize, impl FnMut() -> usize) {
     let mut counter = initial_value;
 
-    let counter_closure = move || {
+    let count_closure = move || {
         counter += 1;
         counter
     };
 
-    counter_closure
+    let reset_closure = move || {
+        counter = 0;
+        counter
+    };
+
+    (count_closure, reset_closure)
 }
 
 #[cfg(test)]
 #[test]
 fn test_counter_closure() {
-    let mut counter = make_counter(0);
-    let one = counter();
-    let two = counter();
-    let three = counter();
+    let (mut count, mut reset) = make_counter(0);
 
-    assert_eq!(one, 1);
-    assert_eq!(two, 2);
-    assert_eq!(three, 3);
+    assert_eq!(count(), 1);
+    assert_eq!(count(), 2);
+    assert_eq!(count(), 3);
+
+    assert_eq!(reset(), 0);
+
+    assert_eq!(count(), 4); // todo: reset closure has its own counter?! This definitely works in Golang. is this because of Rust ownership?
+    assert_eq!(count(), 5);
 }
 
 fn add_one(operand: &mut usize) {

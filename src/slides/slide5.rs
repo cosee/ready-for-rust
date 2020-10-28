@@ -92,7 +92,7 @@ pub fn try_operator() -> Option<String> {
     let item = get_from_predefined_map(&"Die Verwandlung".to_string());
     let mut author_try = "Unknown".to_string();
 
-    author_try = item?;
+    author_try = item?; // todo: this looks like the assignment is only performed if 'item' is filled ...
 
     if author_try.len() > 12 {
         Some("Der Author hat einen langen Namen".to_string())
@@ -106,20 +106,39 @@ fn get_content_length(filename: &impl ToString) -> std::io::Result<usize> {
     use std::fs::File;
     use std::io::Read;
     let mut content = String::new();
-    let _ = File::open(filename.to_string())?.read_to_string(&mut content)?;
+    let result = File::open(filename.to_string())?.read_to_string(&mut content);
+    match result {
+        Ok(_) => Ok(content.len()), // todo: it's kind of redundant now
+        Err(e) => Err(e),
+    }
+}
 
-    Ok(content.len())
+#[cfg(test)]
+#[test]
+fn assert_results() {
+    let result: std::result::Result<usize, &str> = Ok(42);
+    assert_eq!(result, Ok(42));
+
+    let result: std::result::Result<usize, &str> = Err("fail");
+    assert_eq!(result, Err("fail"));
+
+    let result: std::result::Result<usize, std::io::Error> = Ok(42);
+    // assert_eq!(result, Ok(42));  // todo: this does not work, I assume that 'Error' does not implement some kind of equals
+    assert_eq!(result.map_err(|e| "foo"), Ok(42));
 }
 
 #[cfg(test)]
 #[test]
 fn test_get_content_length() {
-    let filename = "filename.txt";
-    let result = get_content_length(&filename);
-    match result {
-        Ok(s) => println!("We read {} characters from the \"{}\"", s, filename),
-        Err(e) => println!("The file \"{}\"could not be read!", filename),
-    }
+    let ok = get_content_length(&"filename.txt");
+    assert_eq!(ok.unwrap(), 1);
+
+    // assert!(matches!(get_content_length(&"filename.txt"), Ok(1))); // todo: this works but cannot report helpful error if assert fails
+    let ok = get_content_length(&"filename.txt").map_err(|e| e.kind()); // Error is mapped
+    assert_eq!(ok, Ok(1));
+
+    let fail = get_content_length(&"does-not-exist.txt").map_err(|e| e.kind());
+    assert_eq!(fail, Err(std::io::ErrorKind::NotFound));
 }
 
 fn next_slide() {
