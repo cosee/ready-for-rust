@@ -31,13 +31,14 @@ fn test_sum() {
     assert_eq!(sum(1, 6), 15);
 }
 
-fn busy_wait() -> String {
+fn busy_wait(file: &str) -> String {
     let ret = loop {
         use std::{fs, thread, time::Duration};
-        thread::sleep(Duration::from_millis(500));
+        thread::sleep(Duration::from_millis(100));
 
-        let exit = fs::read_to_string(".exitcondition");
+        let exit = fs::read_to_string(file);
         if exit.is_err() {
+            println!("still waiting for {}", file);
             continue;
         }
         let exit = exit.unwrap();
@@ -52,7 +53,18 @@ fn busy_wait() -> String {
 #[test]
 fn test_busy_wait() {
     let _ = std::fs::remove_file(".exitcondition");
-    println!("{}", busy_wait());
+
+    // asynchroner Thread legt die Datei an
+    std::thread::spawn(|| {
+        std::thread::sleep(std::time::Duration::from_millis(1000));
+        let _ = std::fs::File::create(".exitcondition");
+    });
+
+    // wartet bis die Datei da ist
+    busy_wait(".exitcondition");
+    println!("Done.");
+
+    let _ = std::fs::remove_file(".exitcondition"); // cleanup
 }
 
 fn double(input: Option<usize>) -> Option<usize> {
