@@ -18,14 +18,4 @@ fn main() {
     traits();
 
     closures();
-
-    unsafe {
-        tooling();
-        borrow_checker();
-    }
-}
-
-extern "C" {
-    fn tooling();
-    fn borrow_checker();
 }

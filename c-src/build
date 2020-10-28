@@ -1,2 +1,0 @@
-clang -c extern.c -o extern.o
-ar r libextern.a extern.o
