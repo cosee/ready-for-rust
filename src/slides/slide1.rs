@@ -16,34 +16,52 @@ pub fn syntax() {
 
     // Veränderbare Referenz
     let three_ref_mut = &mut three;
+}
+
+#[cfg(test)]
+#[test]
+fn test_shadowing() {
+    let v = 42;
+    assert_eq!(v, 42);
 
     // Variablen überschatten
-    let three = 3.0;
+    let v = 13.37;
+    assert_eq!(v, 13.37)
+}
 
+#[cfg(test)]
+#[test]
+fn test_tuples() {
     // Tupel
     let point2 = (4, 5);
     let point2: (u8, u32) = (6, 15);
     let point3 = (4.0, 2, 3.8);
 
     // Zugriff auf Tupelelemente
-    let x = point2.0; // 6
-    let y = point2.1; // 15
+    assert_eq!(point2.0, 6);
+    assert_eq!(point2.1, 15);
 
     // Tupel destructuring
-    let (x, y, z) = point3; // x = 5, y = 7, z = 1
-    let (x, _, z) = point3; // x = 5, y wird weggeschmissen, z = 1
-    let (x, ..) = point3; // x = 5, alles andere wird weggeschmissen
+    let (x, y, z) = point3;
+    assert_eq!(y, 2);
+    let (x, _, z) = point3; // y wird weggeschmissen
+    assert_eq!(z, 3.8);
+    let (x, ..) = point3; // alles nach x wird weggeschmissen
+    assert_eq!(x, 4.0);
 
     // Blocks / Scopes
     {
-        // Hier wird ein anderer point2 erstellt
+        // hier wird ein anderer point2 erstellt
         let point2: (usize, usize) = (49, 30);
-        let (x, y) = point2; // x = 49, y = 30
+        assert_eq!(point2, (49, 30));
     }
 
-    // Alte Variable existiert noch
-    let (x, y) = point2; // x = 6, y = 15
+    assert_eq!(point2, (6, 15)); // alte Variable existiert noch
+}
 
+#[cfg(test)]
+#[test]
+fn test_block() {
     // Rückgabewert aus Block
     let sum = {
         let one = 1;
@@ -51,18 +69,30 @@ pub fn syntax() {
         four + one
     };
 
+    assert_eq!(sum, 5)
+}
+
+#[cfg(test)]
+#[test]
+fn test_stack_array() {
     // Stack allokierter Array
     let mut stack_array: [u32; 5] = [0; 5];
-    stack_array = [0, 1, 2, 3, 4];
+    assert_eq!(stack_array, [0, 0, 0, 0, 0]);
 
+    stack_array = [0, 1, 2, 3, 4];
+    assert_eq!(stack_array, [0, 1, 2, 3, 4]);
+}
+
+#[cfg(test)]
+#[test]
+fn test_vector_slices() {
     // Heap allokierter Array
-    let mut vec = Vec::new();
-    vec = vec![0, 1, 2, 3, 4];
+    let vec = vec![0, 1, 2, 3, 4];
 
     // Slices
-    let slice_middle = &vec[1..3]; // [1, 2]
-    let slice_to_end = &vec[2..]; // [2, 3, 4]
-    let slice_from_start = &vec[..3]; // [0, 1, 2]
+    assert_eq!(&vec[1..3], &[1, 2]);
+    assert_eq!(&vec[2..], &[2, 3, 4]);
+    assert_eq!(&vec[..3], &[0, 1, 2]);
 }
 
 fn next_slide() {
