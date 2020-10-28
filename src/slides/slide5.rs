@@ -99,33 +99,31 @@ fn test_showcase_unwrap_or() {
     assert_eq!(ok_or_default(item.clone(), unknown.clone()), unknown.clone());
 }
 
-pub fn try_operator() -> Option<String> {
-    let item = get_from_predefined_map("Die Verwandlung".to_string());
-    let mut author_match = "Unknown".to_string();
-
+pub fn try_selfmade(name: Option<String>) -> Option<String> {
     // Hole das Objekt aus der Some Variante, ansonsten gib None
     // an unseren Aufrufer zurück (early out).
-    author_match = match item {
+    let unwrapped = match name {
         Some(a) => a,
         None => return None,
     }
-        // Wenn wir hier ankommen haben wir garantiert einen String.
-        .to_uppercase();
+        .to_uppercase(); // Wenn wir hier ankommen haben wir garantiert einen String.
 
-    // äquivalent: Der try-operator
+    return Some(unwrapped);
+}
 
-    let item = get_from_predefined_map("Die Verwandlung".to_string());
-    let mut author_try = "Unknown".to_string();
+pub fn try_operator(name: Option<String>) -> Option<String> {
+    let to_upper = name?.to_uppercase();
+    return Some(to_upper);
+}
 
-    author_try = item?.to_uppercase();
+#[cfg(test)]
+#[test]
+fn test_try() {
+    assert_eq!(try_selfmade(Some("Kafka".to_string())), Some("KAFKA".to_string()));
+    assert_eq!(try_selfmade(None), None);
 
-    assert_eq!(author_match, author_try);
-
-    if author_try.len() > 12 {
-        Some("Der Author hat einen langen Namen".to_string())
-    } else {
-        Some("Der Author hat einen kurzen Namen".to_string())
-    }
+    assert_eq!(try_operator(Some("Kafka".to_string())), Some("KAFKA".to_string()));
+    assert_eq!(try_operator(None), None);
 }
 
 fn get_first_word_from_file(filename: &impl ToString) -> std::io::Result<String> {
@@ -161,7 +159,7 @@ fn test_get_content_length() {
             println!("We read the file \"{}\". It says \"{}\"", filename, s);
             assert_eq!("a", s);
         }
-        Err(e) => println!("The file \"{}\"could not be read!", filename),
+        Err(e) => assert!(false, "The file could not be read!"),
     }
 }
 
