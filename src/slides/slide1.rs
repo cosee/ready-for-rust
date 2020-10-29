@@ -136,6 +136,10 @@ fn string_primitive() {
     hello_dyn.push_str(", world!");
 
     assert_eq!(hello_dyn, "Hello, world!");
+
+    // Slices / Sub-strings
+    assert_eq!(&hello[1..], "ello");
+    assert_eq!(&hello_dyn[1..5], &hello[1..]);
 }
 
 fn next_slide() {
