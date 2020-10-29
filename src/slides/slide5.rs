@@ -42,22 +42,28 @@ fn ok_or_abort(maybe_value: Option<String>) -> String {
 
 #[cfg(test)]
 #[test]
+fn test_ok_or_abort() {
+    assert_eq!(ok_or_abort(Some("Hello".to_string())), "Hello".to_string())
+}
+
+#[cfg(test)]
+#[test]
+#[should_panic]
+fn test_panic() {
+    ok_or_abort(None);
+}
+
+#[cfg(test)]
+#[test]
 fn test_showcase_unwrap() {
+    let kafka = "Kafka".to_string();
     let item = get_from_predefined_map("Die Verwandlung".to_string());
-    let mut author_match = "Unknown".to_string();
+    assert_eq!(item, Some(kafka.clone()));
+    assert_eq!(ok_or_abort(item.clone()), kafka.clone());
+    assert_eq!(item.unwrap(), kafka.clone());   // äquivalent: unwrap
 
-    // Geht nicht. Wir bekommen ein Option zurück, kein String.
-    // Man den Fall, dass kein Element gefunden wurde handhaben.
-    //   author_match = item;
-
-    author_match = ok_or_abort(item);
-
-    // äquivalent: unwrap
-
-    let item = get_from_predefined_map("Die Verwandlung".to_string());
-    let mut author_unwrap = "Unknown".to_string();
-
-    author_unwrap = item.unwrap();
+    let item = get_from_predefined_map("Twilight".to_string());
+    assert_eq!(item, None);
 }
 
 fn ok_or_default(maybe_value: Option<String>, default: String) -> String {
@@ -73,47 +79,51 @@ fn ok_or_default(maybe_value: Option<String>, default: String) -> String {
 
 #[cfg(test)]
 #[test]
-fn test_showcase_unwrap_or() {
-    let item = get_from_predefined_map("Die Verwandlung".to_string());
-    let author_match = ok_or_default(item, "Unknown".to_string());
-
-    // äquivalent: unwrap_or
-
-    let item = get_from_predefined_map("Die Verwandlung".to_string());
-    let mut author_unwrap = "Unknown".to_string();
-
-    author_unwrap = item.unwrap_or("Unbekannt".to_string());
-
-    assert_eq!(author_match, author_unwrap);
+fn test_ok_or_default() {
+    assert_eq!(ok_or_default(Some("Hello".to_string()), "Default".to_string()), "Hello".to_string());
+    assert_eq!(ok_or_default(None, "Default".to_string()), "Default".to_string());
 }
 
-pub fn try_operator() -> Option<String> {
-    let item = get_from_predefined_map("Die Verwandlung".to_string());
-    let mut author_match = "Unknown".to_string();
+#[cfg(test)]
+#[test]
+fn test_showcase_unwrap_or() {
+    let unknown = "Unknown".to_string();
 
+    let item = get_from_predefined_map("Die Verwandlung".to_string());
+    assert_eq!(item, Some("Kafka".to_string()));
+    assert_eq!(ok_or_default(item.clone(), unknown.clone()), "Kafka".to_string());
+    assert_eq!(item.unwrap_or(unknown.clone()), "Kafka".to_string());   // äquivalent: unwrap_or
+
+    let item = get_from_predefined_map("Twilight".to_string());
+    assert_eq!(item, None);
+    assert_eq!(ok_or_default(item.clone(), unknown.clone()), unknown.clone());
+}
+
+pub fn try_selfmade(name: Option<String>) -> Option<String> {
     // Hole das Objekt aus der Some Variante, ansonsten gib None
     // an unseren Aufrufer zurück (early out).
-    author_match = match item {
+    let unwrapped = match name {
         Some(a) => a,
         None => return None,
     }
-    // Wenn wir hier ankommen haben wir garantiert einen String.
-    .to_uppercase();
+        .to_uppercase(); // Wenn wir hier ankommen haben wir garantiert einen String.
 
-    // äquivalent: Der try-operator
+    return Some(unwrapped);
+}
 
-    let item = get_from_predefined_map("Die Verwandlung".to_string());
-    let mut author_try = "Unknown".to_string();
+pub fn try_operator(name: Option<String>) -> Option<String> {
+    let to_upper = name?.to_uppercase();
+    return Some(to_upper);
+}
 
-    author_try = item?.to_uppercase();
+#[cfg(test)]
+#[test]
+fn test_try() {
+    assert_eq!(try_selfmade(Some("Kafka".to_string())), Some("KAFKA".to_string()));
+    assert_eq!(try_selfmade(None), None);
 
-    assert_eq!(author_match, author_try);
-
-    if author_try.len() > 12 {
-        Some("Der Author hat einen langen Namen".to_string())
-    } else {
-        Some("Der Author hat einen kurzen Namen".to_string())
-    }
+    assert_eq!(try_operator(Some("Kafka".to_string())), Some("KAFKA".to_string()));
+    assert_eq!(try_operator(None), None);
 }
 
 fn get_first_word_from_file(filename: &impl ToString) -> std::io::Result<String> {
@@ -148,8 +158,8 @@ fn test_get_content_length() {
         Ok(s) => {
             println!("We read the file \"{}\". It says \"{}\"", filename, s);
             assert_eq!("a", s);
-        },
-        Err(e) => println!("The file \"{}\"could not be read!", filename),
+        }
+        Err(e) => assert!(false, "The file could not be read!"),
     }
 }
 

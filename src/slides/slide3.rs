@@ -36,8 +36,8 @@ impl Talk {
         }
     }
 
-    pub fn tell_title(&self) {
-        println!("Der Titel des Talks ist \"{}\".", self.title);
+    pub fn get_title(&self) -> &String {
+        &self.title
     }
 }
 
@@ -92,11 +92,14 @@ fn test_get_speaker_and_subject() {
     );
 }
 
-pub fn calling_functions() {
+#[cfg(test)]
+#[test]
+fn test_calling_functions() {
     let talk = Talk::lernen_in_der_cloud();
+    let exp = &"Maschinelles Lernen in der Cloud".to_string();
 
-    talk.tell_title();
-    Talk::tell_title(&talk);
+    assert_eq!(talk.get_title(), exp);
+    assert_eq!(Talk::get_title(&talk), exp);
 }
 
 fn next_slide() {

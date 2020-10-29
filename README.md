@@ -9,3 +9,6 @@
    It should should automatically detect your Rust toolchain. 
    You can download and set the standard library with a click.
 4) Profit. You should now be able to start tests in this project from CLion (e.g. in [slide2.rs](src/slides/slide2.rs)).
+
+## How to run on shell
+`make help` documents the relevant cargo targets.
