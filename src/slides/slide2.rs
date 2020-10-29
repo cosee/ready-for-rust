@@ -24,14 +24,34 @@ fn sum(from: u8, to: u8) -> u32 {
     sum as u32
 }
 
+fn sum_vec(vector: Vec<u8>) -> u32 {
+    // Es kann mit for in über alles iteriert werden,
+    // das ein bestimmtes Trait (~=Interface) implementert.
+    // Mehr zu Traits bald™
+    let mut sum = 0;
+    for i in vector {
+        sum += i;
+    }
+    sum as u32
+}
+
 #[cfg(test)]
 #[test]
 fn test_sum() {
     assert_eq!(sum(1, 4), 6);
     assert_eq!(sum(1, 6), 15);
+    // Auch Methoden wie fold und map sind auf allen
+    // Typen die dieses Trait implementieren verfügbar.
+    assert_eq!((1..6).fold(0, |acc, v| acc + v), 15);
+    let vec = vec![1, 2, 3, 4, 5];
+    assert_eq!(sum_vec(vec), 15);
 }
 
 fn busy_wait(file: &str) -> String {
+    // loop erstellt eine Endlosschleife, ähnlich wie while(true)
+    // in manchen anderen Sprachen.
+    // Wenn man eine Schleife mit break abbricht, kann diese auch
+    // einen Wert zurückgeben.
     let ret = loop {
         use std::{fs, thread, time::Duration};
         thread::sleep(Duration::from_millis(100));
@@ -65,43 +85,6 @@ fn test_busy_wait() {
     println!("Done.");
 
     let _ = std::fs::remove_file(".exitcondition"); // cleanup
-}
-
-fn double(input: Option<usize>) -> Option<usize> {
-    // Dekonstruieren & if
-    if let Some(number) = input {
-        return Some(number * 2);
-    } else {
-        return None;
-    };
-}
-
-#[cfg(test)]
-#[test]
-fn test_double() {
-    assert_eq!(double(Some(5)), Some(10));
-    assert_eq!(double(None), None);
-}
-
-fn maybe_count(start: Option<usize>, end: Option<usize>) -> Option<String> {
-    let end = end?;
-    // Dekonstruieren & while
-    let mut counter = start;
-    while let Some(number) = counter {
-        counter = Some(number + 1);
-        if number > end {
-            counter = None;
-        }
-    }
-
-    Some(String::from("Finished!"))
-}
-
-#[cfg(test)]
-#[test]
-fn test_maybe_count() {
-    assert_eq!(maybe_count(Some(3), None), None);
-    assert_eq!(maybe_count(Some(3), Some(5)), Some("Finished!".into()));
 }
 
 fn next_slide() {

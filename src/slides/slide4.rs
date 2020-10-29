@@ -20,10 +20,9 @@ impl Tag {
     }
 
     pub fn string(&self) -> String {
-        use Tag::*;
         match self {
-            Backend => String::from("Backend"),
-            Frontend => String::from("Frontend"),
+            Tag::Backend => String::from("Backend"),
+            Tag::Frontend => String::from("Frontend"),
             _ => String::from("unknown"),
         }
     }
@@ -42,6 +41,17 @@ enum CloudProvider {
     Azure,
     OTC,
 }
+
+impl CloudProvider {
+    fn string(&self) -> String {
+        match self {
+            Self::AWS => "AWS".to_string(),
+            Self::Azure => "Azure".to_string(),
+            Self::OTC => "OTC".to_string(),
+        }
+    }
+}
+
 
 #[derive(Debug, PartialEq)]
 enum TagWithAssociatedData {
@@ -78,18 +88,28 @@ fn test_tag_constructor_java_spring() {
 
 impl TagWithAssociatedData {
     pub fn string(&self) -> String {
+        // Hier wird auf self gematched, und es
+        // dabei destrukturiert. Wie bei anderem
+        // Destrukturieren können Felder auch an
+        // Variablen gebunden werden.
+        // Diese sind dann im Body des match Armes
+        // gültig.
+        use TagWithAssociatedData::*;
         match self {
-            TagWithAssociatedData::Backend {
+            Backend {
                 language: _,
                 framework: f,
-            } => format!("Dies ist (k)ein Talk über {}", f),
-            TagWithAssociatedData::Frontend {
+            } => format!("Dies ist ein Talk über {}", f),
+            Frontend {
                 language: _,
                 framework: f,
-            } => format!("Dies ist (k)ein Talk über {}", f),
-            TagWithAssociatedData::Ops => format!("Dies ist ein Ops Talk."),
-            TagWithAssociatedData::LanguageIntroduction { language: lang } => {
+            } => format!("Dies ist ein Talk über {}", f),
+            Ops => format!("Dies ist ein Ops Talk."),
+            LanguageIntroduction { language: lang } => {
                 format!("Wir stellen {} vor", lang)
+            }
+            Cloud(provider) => {
+                format!("Dies ist ein Talk über {}", provider.string())
             }
             _ => format!("unknown"),
         }
@@ -102,7 +122,7 @@ fn test_stringify_with_data() {
     let variant_with_data = TagWithAssociatedData::java_spring_backend();
     assert_eq!(
         variant_with_data.string(),
-        "Dies ist (k)ein Talk über Spring".to_string()
+        "Dies ist ein Talk über Spring".to_string()
     );
 }
 

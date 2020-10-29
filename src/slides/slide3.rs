@@ -11,7 +11,7 @@ struct Talk {
     tags: Vec<Tag>,
 }
 
-// Implementing methods on structs
+// Funktionen auf einem Struct implementieren
 impl Talk {
     pub fn new(speaker: String, subject: String, title: String, tags: Vec<Tag>) -> Self {
         Self {
@@ -62,7 +62,9 @@ fn test_talk_constructor() {
 }
 
 fn get_speaker(talk: Talk) -> String {
-    // Auf Felder eines Structs zugreifen
+    // Auf Felder eines Structs zugreifen.
+    // Kann fehlschlagen, wenn das Struct von außerhalb
+    // kommt, und das entsprechende Feld nicht pub ist.
     let speaker = talk.speaker;
     speaker
 }
@@ -96,10 +98,10 @@ fn test_get_speaker_and_subject() {
 #[test]
 fn test_calling_functions() {
     let talk = Talk::lernen_in_der_cloud();
-    let exp = &"Maschinelles Lernen in der Cloud".to_string();
+    let exp = "Maschinelles Lernen in der Cloud".to_string();
 
-    assert_eq!(talk.get_title(), exp);
-    assert_eq!(Talk::get_title(&talk), exp);
+    assert_eq!(talk.get_title(), &exp);
+    assert_eq!(Talk::get_title(&talk), &exp);
 }
 
 fn next_slide() {

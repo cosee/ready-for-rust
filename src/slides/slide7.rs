@@ -54,7 +54,7 @@ fn add_one(operand: &mut usize) {
     *operand += 1;
 }
 
-fn apply_function<T>(f: &dyn Fn(&mut T), t: &mut T) {
+fn apply_function<T>(f: impl Fn(&mut T), t: &mut T) {
     f(t);
 }
 
