@@ -47,6 +47,21 @@ fn test_sum() {
     assert_eq!(sum_vec(vec), 15);
 }
 
+fn count_to(target: usize) -> usize {
+    let mut counter = 0;
+    while counter < target {
+        counter += 1;
+    }
+
+    counter
+}
+
+#[cfg(test)]
+#[test]
+fn test_count_to() {
+    assert_eq!(count_to(10), 10);
+}
+
 fn busy_wait(file: &str) -> String {
     // loop erstellt eine Endlosschleife, ähnlich wie while(true)
     // in manchen anderen Sprachen.
